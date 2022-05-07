@@ -102,7 +102,7 @@ router.post('/', (req, res) => {
  *  paths:
  *      /user/login/:
  *          get:
- *              summary: Logs in a registered user
+ *              summary: Logs in a registered user & returns bearer token
  *              tags: [User]
  *              requestBody:
  *                  required: true
