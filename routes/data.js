@@ -96,10 +96,26 @@ router.get('/all', verifyToken, (req, res) => {
             con.connect((err) => {
                 if(err) destroySQLConnectionOnError();
                 else {
-                    // con.query('SELECT * FROM user', (error, result, fields) => {
+                    // con.query('SELECT * FROM data', (error, result, fields) => {
                         res.sendStatus(200);
                         con.destroy();
                     // });
+                }
+            });
+        }
+    });
+});
+
+router.put('/setData', verifyToken, (req, res) => {
+    jwt.verify(req.token, tokenSecret, (err, authData) => {
+        if(err) res.sendStatus(403);
+        else {
+            var con = createSQLConnection();
+            con.connect((err) => {
+                if(err) destroySQLConnectionOnError();
+                else {
+                    res.sendStatus(200);
+                    con.destroy();
                 }
             });
         }
