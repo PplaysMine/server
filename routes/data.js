@@ -87,6 +87,8 @@ function verifyToken(req, res, next) {
  *                          application/json:
  *                              schema:
  *                                  $ref: '#/components/schemas/AllData'
+ *                  "403":
+ *                      description: Token could not be verified
  */
 router.get('/all', verifyToken, (req, res) => {
     jwt.verify(req.token, tokenSecret, (err, authData) => {
@@ -96,10 +98,43 @@ router.get('/all', verifyToken, (req, res) => {
             con.connect((err) => {
                 if(err) destroySQLConnectionOnError();
                 else {
-                    // con.query('SELECT * FROM user', (error, result, fields) => {
+                    // con.query('SELECT * FROM data', (error, result, fields) => {
                         res.sendStatus(200);
                         con.destroy();
                     // });
+                }
+            });
+        }
+    });
+});
+
+/**
+ * @swagger
+ *  paths:
+ *      /data/setData/:
+ *          put:
+ *              summary: Add data for user (requires bearer token) 
+ *              tags: [data]
+ *              security:
+ *                  - bearerAuth: []
+ *              requestBody:
+ *                  required: false
+ *              responses:
+ *                  "200":
+ *                      description: User exists, data is added to user
+ *                  "403":
+ *                      description: Token could not be verified
+ */
+router.put('/setData', verifyToken, (req, res) => {
+    jwt.verify(req.token, tokenSecret, (err, authData) => {
+        if(err) res.sendStatus(403);
+        else {
+            var con = createSQLConnection();
+            con.connect((err) => {
+                if(err) destroySQLConnectionOnError();
+                else {
+                    res.sendStatus(200);
+                    con.destroy();
                 }
             });
         }
