@@ -114,7 +114,7 @@ router.get('/all', verifyToken, (req, res) => {
  *      /data/setData/:
  *          put:
  *              summary: Add data for user (requires bearer token) 
- *              tags: [data]
+ *              tags: [Data]
  *              security:
  *                  - bearerAuth: []
  *              requestBody:
