@@ -101,7 +101,7 @@ router.post('/', (req, res) => {
  * @swagger
  *  paths:
  *      /user/login/:
- *          get:
+ *          post:
  *              summary: Logs in a registered user & returns bearer token
  *              tags: [User]
  *              requestBody:
@@ -124,7 +124,7 @@ router.post('/', (req, res) => {
  *                  "500":
  *                      description: Internal server error
  */
-router.get('/login', (req, res) => {
+router.post('/login', (req, res) => {
     var b = req.body;
 
     if(!b) {
@@ -139,6 +139,7 @@ router.get('/login', (req, res) => {
 
     jwt.sign({user}, tokenSecret, { expiresIn: "1hr" }, (err, token) => {
         if(err) throw err;
+        console.log(b);
         if(b.user && b.pass) {
             var con = createSQLConnection();
             con.connect((err) => {
