@@ -17,7 +17,7 @@ jobs:
     steps:
       - run: git config --global user.name "PplaysMine"
       - run: git config --global user.email "pwiegand2001@gmail.com"
-      - run: git remote add origin "https://github.com/PplaysMine/TestServerActions"
+      - run: git remote add origin "https://github.com/PplaysMine/TestServerActions.git"
       - run: git add -A
       - run: git commit -m "Committing from repo"
       - run: git push –set-upstream origin main
