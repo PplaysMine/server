@@ -55,6 +55,10 @@ app.use("/api-docs", basicAuth({
     challenge: true
 }), swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
 
+app.post('payload', (req, res) => {
+    console.log(req.body);
+});
+
 var httpsServer = https.createServer(options, app);
 httpsServer.listen(config.server.port, () => {
     console.log(`Listening on port ${config.server.port}`);
