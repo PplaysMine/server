@@ -46,6 +46,7 @@ function basicAuthAuthorizer(user, pass) {
     return userMatches & passwordMatches;
 }
 
+// Testing for git
 app = express();
 app.use(express.json());
 app.use('/user', require('./routes/user'));
