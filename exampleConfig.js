@@ -16,10 +16,9 @@ config.db.dbName = '';
 config.server.port = 1;
 config.server.swaggerPort = 1;
 config.server.tokenSecret = '';
+config.server.url = '';
 
 config.docs.user = '';
 config.docs.pass = '';
-
-config.url = '';
 
 module.exports = config;
