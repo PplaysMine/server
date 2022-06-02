@@ -20,4 +20,6 @@ config.server.tokenSecret = '';
 config.docs.user = '';
 config.docs.pass = '';
 
+config.url = '';
+
 module.exports = config;
