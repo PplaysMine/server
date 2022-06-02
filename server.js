@@ -30,7 +30,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: "https://server.selab2022.de:30005/"
+                url: config.url
             },
         ],
     },
