@@ -139,7 +139,6 @@ router.post('/login', (req, res) => {
 
     jwt.sign({user}, tokenSecret, { expiresIn: "1hr" }, (err, token) => {
         if(err) throw err;
-        console.log(b);
         if(b.user && b.pass) {
             var con = createSQLConnection();
             con.connect((err) => {
