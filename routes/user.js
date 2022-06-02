@@ -137,7 +137,11 @@ router.post('/login', (req, res) => {
         userPass: b.pass
     }
 
+<<<<<<< HEAD
     jwt.sign({user}, tokenSecret, { expiresIn: "24h" }, (err, token) => {
+=======
+    jwt.sign({user}, tokenSecret, { expiresIn: "1hr" }, (err, token) => {
+>>>>>>> 746a3778805105e284a48516b0ab2c82abc85a60
         if(err) throw err;
         if(b.user && b.pass) {
             var con = createSQLConnection();
