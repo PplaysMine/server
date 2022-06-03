@@ -23,4 +23,5 @@ Create a new file named `config.js` and copy the contents of the file `exampleCo
 - `config.server.port` contains the port the server is listening on. This is the port you want to send your data to
 - `config.server.swaggerPort` contains the port for the swagger documentation. <b>This port has to be different from `config.server.port`!</b>
 - `config.server.tokenSecret` contains any string of characters to validate your jwt token
+- `config.server.url` contains the base url of your service, which will be displayed in the swagger docs
 - `config.docs.user` and `config.docs.pass` contain the credentials for the password protected swagger documentation
