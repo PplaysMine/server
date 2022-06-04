@@ -117,7 +117,7 @@ router.get('/all', verifyToken, (req, res) => {
  *  paths:
  *      /data/setQuestionnaireData/:
  *          put:
- *              summary: Add data for user (requires bearer token) 
+ *              summary: Add questionnaire data for user (requires bearer token) 
  *              tags: [Data]
  *              security:
  *                  - bearerAuth: []
