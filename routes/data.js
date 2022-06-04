@@ -7,10 +7,14 @@
  *              required:
  *                  - data
  *              properties:
+ *                  timestamp:
+ *                      type: long
+ *                      dexcription: timestamp of the data
  *                  data:
  *                      type: object
  *                      description: A single data object
  *              example:
+ *                  timestamp: 0
  *                  data: {}
  *          AllData:
  *              type: object
@@ -111,21 +115,25 @@ router.get('/all', verifyToken, (req, res) => {
 /**
  * @swagger
  *  paths:
- *      /data/setData/:
+ *      /data/setQuestionnaireData/:
  *          put:
  *              summary: Add data for user (requires bearer token) 
  *              tags: [Data]
  *              security:
  *                  - bearerAuth: []
  *              requestBody:
- *                  required: false
+ *                  required: true
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/Data'
  *              responses:
  *                  "200":
  *                      description: User exists, data is added to user
  *                  "403":
  *                      description: Token could not be verified
  */
-router.put('/setData', verifyToken, (req, res) => {
+router.put('/setQuestionnaireData', verifyToken, (req, res) => {
     jwt.verify(req.token, tokenSecret, (err, authData) => {
         if(err) res.sendStatus(403);
         else {
