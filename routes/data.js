@@ -151,8 +151,24 @@ router.put('/setQuestionnaireData', verifyToken, (req, res) => {
                 con.connect((err) => {
                     if(err) destroySQLConnectionOnError();
                     else {
-                        res.sendStatus(200);
-                        con.destroy();
+                        con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
+                            if(error) destroySQLConnectionOnError(con, res);
+                            else {
+                                if(result.length > 0) {
+                                    userId = result[0].userId;
+                                    con.query("INSERT INTO questionnaireData (userId, timestamp, data) VALUES (?, ?, ?)", [userId, b.timestamp, JSON.stringify(b.data)], (e, r, f) => {
+                                        if(e) {console.log(e); destroySQLConnectionOnError(con, res);}
+                                        else {
+                                            res.sendStatus(200);
+                                            con.destroy();
+                                        }
+                                    });
+                                } else {
+                                    res.sendStatus(401);
+                                    con.destroy();
+                                }
+                            }
+                        });
                     }
                 });
             } else {
