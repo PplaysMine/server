@@ -130,21 +130,34 @@ router.get('/all', verifyToken, (req, res) => {
  *              responses:
  *                  "200":
  *                      description: User exists, data is added to user
+ *                  "400":
+ *                      description: Missing / malformed request body
  *                  "403":
  *                      description: Token could not be verified
  */
 router.put('/setQuestionnaireData', verifyToken, (req, res) => {
+    var b = req.body;
+
+    if(!b) {
+        res.sendStatus(400);
+        return;
+    }
+
     jwt.verify(req.token, tokenSecret, (err, authData) => {
         if(err) res.sendStatus(403);
         else {
-            var con = createSQLConnection();
-            con.connect((err) => {
-                if(err) destroySQLConnectionOnError();
-                else {
-                    res.sendStatus(200);
-                    con.destroy();
-                }
-            });
+            if(b.timestamp && b.data) {
+                var con = createSQLConnection();
+                con.connect((err) => {
+                    if(err) destroySQLConnectionOnError();
+                    else {
+                        res.sendStatus(200);
+                        con.destroy();
+                    }
+                });
+            } else {
+                res.sendStatus(400);
+            }
         }
     });
 });
