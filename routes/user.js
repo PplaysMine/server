@@ -234,7 +234,7 @@ router.post('/register', (req, res) => {
  *              responses:
  *                  "200":
  *                      description: User is successfully deleted
- *                  "403":
+ *                  "401":
  *                      description: Token could not be verified
  *                  "404":
  *                      description: User with given username does not exist
@@ -243,7 +243,7 @@ router.post('/register', (req, res) => {
  */
 router.post('/deleteAccount', verifyToken, (req, res) => {
     jwt.verify(req.token, tokenSecret, (err, authData) => {
-        if(err) res.sendStatus(403);
+        if(err) res.sendStatus(401);
         else {
             var con = createSQLConnection();
             con.connect((err) => {
@@ -292,7 +292,7 @@ router.post('/deleteAccount', verifyToken, (req, res) => {
  *                                  $ref: '#/components/schemas/Token'
  *                  "400":
  *                      description: Missing / malformed request body
- *                  "403":
+ *                  "401":
  *                      description: Token could not be verified
  *                  "404":
  *                      description: User with given username does not exist
@@ -301,7 +301,7 @@ router.post('/deleteAccount', verifyToken, (req, res) => {
  */
 router.put('/changePassword', verifyToken, (req, res) => {
     jwt.verify(req.token, tokenSecret, (err, authData) => {
-        if(err) res.sendStatus(403);
+        if(err) res.sendStatus(401);
         else {
             var b = req.body;
             if(b.newPass) {

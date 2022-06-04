@@ -132,7 +132,7 @@ router.get('/all', verifyToken, (req, res) => {
  *                      description: User exists, data is added to user
  *                  "400":
  *                      description: Missing / malformed request body
- *                  "403":
+ *                  "401":
  *                      description: Token could not be verified
  */
 router.put('/setQuestionnaireData', verifyToken, (req, res) => {
@@ -144,7 +144,7 @@ router.put('/setQuestionnaireData', verifyToken, (req, res) => {
     }
 
     jwt.verify(req.token, tokenSecret, (err, authData) => {
-        if(err) res.sendStatus(403);
+        if(err) res.sendStatus(401);
         else {
             if(b.timestamp && b.data) {
                 var con = createSQLConnection();
@@ -176,6 +176,21 @@ router.put('/setQuestionnaireData', verifyToken, (req, res) => {
             }
         }
     });
+});
+
+/**
+ * @swagger
+ *  paths:
+ *      /data/*:
+ *          post:
+ *              summary: All other routes return 418
+ *              tags: [Data]
+ *              responses:
+ *                  "418":
+ *                      description: 
+ */
+ router.post('*', (req, res) => {
+    res.sendStatus(418);
 });
 
 module.exports = router;
