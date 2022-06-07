@@ -2,14 +2,35 @@
  * @swagger
  *  components:
  *      schemas:
+ *          SensorData:
+ *              type: object
+ *              required:
+ *                  - start
+ *                  - end
+ *                  - data
+ *              properties:
+ *                  start:
+ *                      type: long
+ *                      description: Timestamp of the start time
+ *                  end:
+ *                      type: long
+ *                      description: Timestamp of the end time
+ *                  data:
+ *                      type: array
+ *                      description: array of sensor data
+ *              example:
+ *                  start: 0
+ *                  end: 0
+ *                  data: [{}]
  *          Data:
  *              type: object
  *              required:
  *                  - data
+ *                  - timestamp
  *              properties:
  *                  timestamp:
  *                      type: long
- *                      dexcription: timestamp of the data
+ *                      description: timestamp of the data
  *                  data:
  *                      type: object
  *                      description: A single data object
@@ -178,7 +199,30 @@ router.put('/setQuestionnaireData', verifyToken, (req, res) => {
     });
 });
 
-router.put('/setAccelerometerData', verifyToken, (req, res) => {
+/**
+ * @swagger
+ *  paths:
+ *      /data/setSensorData/:
+ *          put:
+ *              summary: Add sensor data for user (requires bearer token) 
+ *              tags: [Data]
+ *              security:
+ *                  - bearerAuth: []
+ *              requestBody:
+ *                  required: true
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/SensorData'
+ *              responses:
+ *                  "200":
+ *                      description: User exists, data is added to user
+ *                  "400":
+ *                      description: Missing / malformed request body
+ *                  "401":
+ *                      description: Token could not be verified
+ */
+router.put('/setSensorData', verifyToken, (req, res) => {
     var b = req.body;
 
     if(!b) {
