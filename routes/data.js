@@ -40,13 +40,13 @@
  *          AllData:
  *              type: object
  *              required:
- *                  - dataArray
+ *                  - data
  *              properties:
- *                  dataArray:
+ *                  data:
  *                      type: array
  *                      description: All data associated with the user
  *              example:
- *                  dataArray: [{}]
+ *                  data: [{}]
  *      securitySchemes:
  *          bearerAuth:
  *              type: http
@@ -97,14 +97,12 @@ function verifyToken(req, res, next) {
 /**
  * @swagger
  *  paths:
- *      /data/all/:
+ *      /data/getQuestionnaireData/:
  *          get:
- *              summary: Returns all data associated with the user (requires bearer token)
+ *              summary: Returns all questionnaire data associated with the user (requires bearer token)
  *              tags: [Data]
  *              security:
  *                  - bearerAuth: []
- *              requestBody:
- *                  required: false
  *              responses:
  *                  "200":
  *                      description: User exists, send all data associated with user
@@ -115,13 +113,13 @@ function verifyToken(req, res, next) {
  *                  "403":
  *                      description: Token could not be verified
  */
-router.get('/all', verifyToken, (req, res) => {
+router.get('/getQuestionnaireData', verifyToken, (req, res) => {
     jwt.verify(req.token, tokenSecret, (err, authData) => {
         if(err) res.sendStatus(403);
         else {
             var con = createSQLConnection();
             con.connect((err) => {
-                if(err) destroySQLConnectionOnError();
+                if(err) destroySQLConnectionOnError(con, res);
                 else {
                     // con.query('SELECT * FROM data', (error, result, fields) => {
                         res.sendStatus(200);
@@ -133,6 +131,37 @@ router.get('/all', verifyToken, (req, res) => {
     });
 });
 
+
+router.get('/getActivityData')
+
+/**
+ * @swagger
+ *  paths:
+ *      /data/getSensorData/:
+ *          get:
+ *              summary: Returns all sensor data associated with the user (requires bearer token)
+ *              tags: [Data]
+ *              security:
+ *                  - bearerAuth: []
+ *              responses:
+ *                  "403":
+ *                      description: Token could not be verified
+ */
+router.get('/getSensorData', verifyToken, (req, res) => {
+    jwt.verify(req.token, tokenSecret, (err, authData) => {
+        if(err) res.sendStatus(403);
+        else {
+            var con = createSQLConnection();
+            con.connect((err) => {
+                if(err) destroySQLConnectionOnError(con, res);
+                else {
+                    res.sendStatus(200);
+                    con.destroy();
+                }
+            });
+        }
+    });
+});
 /**
  * @swagger
  *  paths:

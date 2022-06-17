@@ -87,8 +87,6 @@ function verifyToken(req, res, next) {
  *          post:
  *              summary: Test connection
  *              tags: [User]
- *              requestBody:
- *                  required: false
  *              responses:
  *                  "403":
  *                      description: Only for testing purposes, returns 403
@@ -225,12 +223,6 @@ router.post('/register', (req, res) => {
  *              tags: [User]
  *              security:
  *                  - bearerAuth: []
- *              requestBody:
- *                  required: false
- *                  content:
- *                      application/json:
- *                          schema:
- *                              $ref: '#/components/schemas/User'
  *              responses:
  *                  "200":
  *                      description: User is successfully deleted
