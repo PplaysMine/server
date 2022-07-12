@@ -2,6 +2,26 @@
  * @swagger
  *  components:
  *      schemas:
+ *          ActivityData:
+ *              type: object
+ *              required:
+ *                  - name
+ *                  - start
+ *                  - end
+ *              properties:
+ *                  name:
+ *                      type: string
+ *                      description: Name of activity
+ *                  start:
+ *                      type: long
+ *                      description: Timestamp of the start time
+ *                  end:
+ *                      type: long
+ *                      description: Timestamp of the end time
+ *              example:
+ *                  name: ''
+ *                  start: 0
+ *                  end: 0
  *          SensorData:
  *              type: object
  *              required:
@@ -303,6 +323,30 @@ router.put('/setSensorData', verifyToken, (req, res) => {
     });
 });
 
+
+/**
+ * @swagger
+ *  paths:
+ *      /data/setActivityData/:
+ *          put:
+ *              summary: Add activity data for user (requires bearer token)
+ *              tags: [Data]
+ *              security:
+ *                  - bearerAuth: []
+ *              requestBody:
+ *                  required: true
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/ActivityData'
+ *              responses:
+ *                  "200":
+ *                      description: User exists, data is added to user
+ *                  "400":
+ *                      description: Missing / malformed request body
+ *                  "401":
+ *                      description: Token could not be verified
+ */
 router.put('setActivityData', verifyToken, (req, res) => {
     var b = req.body;
 
@@ -320,6 +364,9 @@ router.put('setActivityData', verifyToken, (req, res) => {
                     if(result.length > 0) {
                         userId = result[0].userId;
                         con.query("INSERT INTO activityData (userId, start, end, data) VALUES (?, ?, ?, ?)", [userId, b.start, b.end, b.data]);
+                    } else {
+                        res.sendStatus(401);
+                        con.destroy();
                     }
                 }
             });
