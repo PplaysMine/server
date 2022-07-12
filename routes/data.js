@@ -105,26 +105,40 @@ function verifyToken(req, res, next) {
  *                  - bearerAuth: []
  *              responses:
  *                  "200":
- *                      description: User exists, send all data associated with user
+ *                      description: User exists, send all questionnaire data associated with user
  *                      content:
  *                          application/json:
  *                              schema:
  *                                  $ref: '#/components/schemas/AllData'
- *                  "403":
+ *                  "401":
  *                      description: Token could not be verified
  */
 router.get('/getQuestionnaireData', verifyToken, (req, res) => {
     jwt.verify(req.token, tokenSecret, (err, authData) => {
-        if(err) res.sendStatus(403);
+        if(err) res.sendStatus(401);
         else {
             var con = createSQLConnection();
             con.connect((err) => {
                 if(err) destroySQLConnectionOnError(con, res);
                 else {
-                    // con.query('SELECT * FROM data', (error, result, fields) => {
-                        res.sendStatus(200);
-                        con.destroy();
-                    // });
+                    con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
+                        if(error) destroySQLConnectionOnError(con, res);
+                        else {
+                            if(result.length > 0) {
+                                userId = result[0].userId;
+                                con.query("SELECT timestamp, data FROM questionnaireData WHERE userId=?", [userId], (e, r, f) => {
+                                    if(e) destroySQLConnectionOnError(con, res);
+                                    else {
+                                        res.status(200).json(r);
+                                        con.destroy();
+                                    }
+                                });
+                            } else {
+                                res.sendStatus(401);
+                                con.destroy();
+                            }
+                        }
+                    });
                 }
             });
         }
@@ -133,6 +147,7 @@ router.get('/getQuestionnaireData', verifyToken, (req, res) => {
 
 
 router.get('/getActivityData')
+
 
 /**
  * @swagger
@@ -148,20 +163,10 @@ router.get('/getActivityData')
  *                      description: Token could not be verified
  */
 router.get('/getSensorData', verifyToken, (req, res) => {
-    jwt.verify(req.token, tokenSecret, (err, authData) => {
-        if(err) res.sendStatus(403);
-        else {
-            var con = createSQLConnection();
-            con.connect((err) => {
-                if(err) destroySQLConnectionOnError(con, res);
-                else {
-                    res.sendStatus(200);
-                    con.destroy();
-                }
-            });
-        }
-    });
+    
 });
+
+
 /**
  * @swagger
  *  paths:
