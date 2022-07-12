@@ -47,6 +47,10 @@
  *                      description: All data associated with the user
  *              example:
  *                  data: [{}]
+ *          AllQuestionnaireData:
+ *              type: object
+ *              example:
+ *                  [{timestamp: 0, data: {}}]
  *      securitySchemes:
  *          bearerAuth:
  *              type: http
@@ -109,7 +113,7 @@ function verifyToken(req, res, next) {
  *                      content:
  *                          application/json:
  *                              schema:
- *                                  $ref: '#/components/schemas/AllData'
+ *                                  $ref: '#/components/schemas/AllQuestionnaireData'
  *                  "401":
  *                      description: Token could not be verified
  */
