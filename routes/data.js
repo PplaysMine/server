@@ -277,7 +277,7 @@ router.put('/setSensorData', verifyToken, (req, res) => {
                     if(err) destroySQLConnectionOnError(con, res);
                     else {
                         con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
-                            if(error) destroySQLConnectionOnError();
+                            if(error) destroySQLConnectionOnError(con, res);
                             else {
                                 if(result.length > 0) {
                                     userId = result[0].userId;
@@ -299,6 +299,30 @@ router.put('/setSensorData', verifyToken, (req, res) => {
             } else {
                 res.sendStatus(400);
             }
+        }
+    });
+});
+
+router.put('setActivityData', verifyToken, (req, res) => {
+    var b = req.body;
+
+    if(!b) {
+        res.sendStatus(400);
+        return;
+    }
+
+    jwt.verify(req.token, tokenSecret, (err, authData) => {
+        if(err) res.sendStatus(401);
+        else {
+            con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
+                if(error) destroySQLConnectionOnError(con, res);
+                else {
+                    if(result.length > 0) {
+                        userId = result[0].userId;
+                        con.query("INSERT INTO activityData (userId, start, end, data) VALUES (?, ?, ?, ?)", [userId, b.start, b.end, b.data]);
+                    }
+                }
+            });
         }
     });
 });
