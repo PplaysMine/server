@@ -347,7 +347,7 @@ router.put('/setSensorData', verifyToken, (req, res) => {
  *                  "401":
  *                      description: Token could not be verified
  */
-router.put('setActivityData', verifyToken, (req, res) => {
+router.put('/setActivityData', verifyToken, (req, res) => {
     var b = req.body;
 
     if(!b) {
@@ -358,24 +358,34 @@ router.put('setActivityData', verifyToken, (req, res) => {
     jwt.verify(req.token, tokenSecret, (err, authData) => {
         if(err) res.sendStatus(401);
         else {
-            con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
-                if(error) destroySQLConnectionOnError(con, res);
-                else {
-                    if(result.length > 0) {
-                        userId = result[0].userId;
-                        con.query("INSERT INTO activityData (userId, start, end, name) VALUES (?, ?, ?, ?)", [userId, b.start, b.end, b.name], (e, r, f) => {
-                            if(e) destroySQLConnectionOnError(con, res);
+            if(b.start && b.end && b.name) {
+                var con = createSQLConnection();
+                con.connect((err) => {
+                    if(err) destroySQLConnectionOnError(con, res);
+                    else {
+                        con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
+                            if(error) destroySQLConnectionOnError(con, res);
                             else {
-                                res.sendStatus(200);
-                                con.destroy();
+                                if(result.length > 0) {
+                                    userId = result[0].userId;
+                                    con.query("INSERT INTO activityData (userId, start, end, name) VALUES (?, ?, ?, ?)", [userId, b.start, b.end, b.name], (e, r, f) => {
+                                        if(e) destroySQLConnectionOnError(con, res);
+                                        else {
+                                            res.sendStatus(200);
+                                            con.destroy();
+                                        }
+                                    });
+                                } else {
+                                    res.sendStatus(401);
+                                    con.destroy();
+                                }
                             }
                         });
-                    } else {
-                        res.sendStatus(401);
-                        con.destroy();
                     }
-                }
-            });
+                });
+            } else {
+                res.sendStatus(400);
+            }
         }
     });
 });
