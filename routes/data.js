@@ -74,7 +74,7 @@
  *          AllActivityData:
  *              type: object
  *              example:
- *                  [{start: 0, end: 0, name:''}]
+ *                  [{start: 0, end: 0, name: ""}]
  *      securitySchemes:
  *          bearerAuth:
  *              type: http
