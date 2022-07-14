@@ -363,7 +363,13 @@ router.put('setActivityData', verifyToken, (req, res) => {
                 else {
                     if(result.length > 0) {
                         userId = result[0].userId;
-                        con.query("INSERT INTO activityData (userId, start, end, data) VALUES (?, ?, ?, ?)", [userId, b.start, b.end, b.data]);
+                        con.query("INSERT INTO activityData (userId, start, end, name) VALUES (?, ?, ?, ?)", [userId, b.start, b.end, b.name], (e, r, f) => {
+                            if(e) destroySQLConnectionOnError(con, res);
+                            else {
+                                res.sendStatus(200);
+                                con.destroy();
+                            }
+                        });
                     } else {
                         res.sendStatus(401);
                         con.destroy();
