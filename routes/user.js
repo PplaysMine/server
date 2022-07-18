@@ -249,10 +249,17 @@ router.post('/deleteAccount', verifyToken, (req, res) => {
                     con.query('SELECT * FROM user WHERE username=? AND password=?', [authData.user.userName, authData.user.userPass], (error, result, fields) => {
                         if(error) destroySQLConnectionOnError(con, res);
                         if(result.length > 0) {
-                            con.query('DELETE FROM user WHERE username=?', [authData.user.userName], (e, r, f) => {
+                            userId = result[0].userId;
+                            con.query('DELETE FROM questionnaireData WHERE userId=?', [userId], (e, r, f) => {
                                 if(e) destroySQLConnectionOnError(con, res);
-                                else res.sendStatus(200);
-                                con.destroy();
+                                else {
+                                    con.query("DELETE FROM activityData WHERE userId=?", [userId]);
+                                    con.query("DELETE FROM user WHERE username=?", [authData.user.userName], (e, r, f) => {
+                                        if(e) destroySQLConnectionOnError(con, res);
+                                        else res.sendStatus(200);
+                                    });
+                                    con.destroy();
+                                }
                             });
                         } else {
                             res.status(404).send("User does not exist.");
