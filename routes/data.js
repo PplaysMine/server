@@ -25,23 +25,22 @@
  *          SensorData:
  *              type: object
  *              required:
- *                  - start
- *                  - end
+ *                  - timestamp
  *                  - data
  *              properties:
- *                  start:
+ *                  timestamp:
  *                      type: long
  *                      description: Timestamp of the start time
- *                  end:
- *                      type: long
- *                      description: Timestamp of the end time
  *                  data:
- *                      type: array
- *                      description: array of sensor data
+ *                      type: object
+ *                      description: A single data object
  *              example:
- *                  start: 0
- *                  end: 0
- *                  data: [{}]
+ *                  timestamp: 0
+ *                  data: {}
+ *          AllSensorData:
+ *              type: object
+ *              example:
+ *                  [{timestamp: 0, data: {}}]
  *          Data:
  *              type: object
  *              required:
@@ -240,11 +239,58 @@ router.get('/getActivityData', verifyToken, (req, res) => {
  *              security:
  *                  - bearerAuth: []
  *              responses:
+ *                  "200":
+ *                      description: User exists, send all accelerometer data associated with the user in the specified timeframe (requires bearer token)
+ *                      content:
+ *                          application/json:
+ *                              schema:
+ *                                  $ref: '#/components/schemas/AllSensorData'
  *                  "403":
  *                      description: Token could not be verified
+ *                  "500":
+ *                      description: Internal server error
  */
 router.get('/getSensorData', verifyToken, (req, res) => {
-    
+    var b = req.body;
+
+    if(!b) {
+        res.sendStatus(400);
+        return;
+    }
+
+    jwt.verify(req.token, tokenSecret, (err, authData) => {
+        if(err) res.sendStatus(401);
+        else {
+            if(b.startTimestamp && b.endTimestamp) {
+                var con = createSQLConnection();
+                con.connect((err) => {
+                    if(err) destroySQLConnectionOnError(con, res);
+                    else {
+                        con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
+                            if(error) destroySQLConnectionOnError(con, res);
+                            else {
+                                if(result.length > 0) {
+                                    userId = result[0].userId;
+                                    con.query("SELECT timestamp, data FROM accelerometerData WHERE userId=? AND timestamp>=? AND timestamp<?", [userId, b.startTimestamp, b.endTimestamp], (e, r, f) => {
+                                        if(e) destroySQLConnectionOnError(con, res);
+                                        else {
+                                            res.status(200).send(r);
+                                            con.destroy();
+                                        }
+                                    });
+                                } else {
+                                    res.sendStatus(403);
+                                    con.destroy();
+                                }
+                            }
+                        });
+                    }
+                });
+            } else {
+                res.sendStatus(400);
+            }
+        }
+    });
 });
 
 
@@ -285,7 +331,7 @@ router.put('/setQuestionnaireData', verifyToken, (req, res) => {
             if(b.timestamp && b.data) {
                 var con = createSQLConnection();
                 con.connect((err) => {
-                    if(err) destroySQLConnectionOnError();
+                    if(err) destroySQLConnectionOnError(con, res);
                     else {
                         con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
                             if(error) destroySQLConnectionOnError(con, res);
@@ -358,7 +404,7 @@ router.put('/setSensorData', verifyToken, (req, res) => {
                             else {
                                 if(result.length > 0) {
                                     userId = result[0].userId;
-                                    con.query("INSERT INTO userData (userId, start, end, data) VALUES (?, ?, ?, ?)", [userId, b.start, b.end, JSON.stringify(b.data)], (e, r, f) => {
+                                    con.query("INSERT INTO accelerometerData (userId, timestamp, data) VALUES (?, ?, ?)", [userId, b.timestamp, JSON.stringify(b.data)], (e, r, f) => {
                                         if(e) destroySQLConnectionOnError(con, res);
                                         else {
                                             res.sendStatus(200);
