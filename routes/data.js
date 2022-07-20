@@ -22,6 +22,14 @@
  *                  name: ''
  *                  start: 0
  *                  end: 0
+ *          Timestamps:
+ *              type: object
+ *              required:
+ *                  - startTimestamp
+ *                  - endTimestamp
+ *              example:
+ *                  startTimestamp: 0
+ *                  endTimestamp: 0
  *          SensorData:
  *              type: object
  *              required:
@@ -235,6 +243,12 @@ router.get('/getActivityData', verifyToken, (req, res) => {
  *      /data/getSensorData/:
  *          get:
  *              summary: Returns all sensor data associated with the user (requires bearer token)
+ *              requestBody:
+ *                  required: true
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/Timestamps'
  *              tags: [Data]
  *              security:
  *                  - bearerAuth: []
