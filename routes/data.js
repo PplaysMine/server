@@ -507,6 +507,43 @@ router.put('/setActivityData', verifyToken, (req, res) => {
     });
 });
 
+router.post('/deleteData', verifyToken, (req, res) => {
+    jwt.verify(req.token, tokenSecret, (err, authData) => {
+        if(err) res.sendStatus(401);
+        else {
+            var con = createSQLConnection();
+            con.connect((err) => {
+                if(err) destroySQLConnectionOnError(con, res);
+                else {
+                    con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
+                        if(error) destroySQLConnectionOnError(con, res);
+                        else {
+                            if(result.length > 0) {
+                                userId = result[0].userId;
+                                /*con.query("DELETE FROM activityData WHERE userId=?", [userId], (e, r, f) => {
+                                    if(e)
+                                });*/
+                                con.query("DELETE FROM accelerometerData WHERE userId=?", [userId], (e, r, f) => {
+                                    if(e) destroySQLConnectionOnError(con, res);
+                                });
+                                con.query("DELETE FROM questionnaireData WHERE userId=?", [userId], (e, r, f) => {
+                                    if(e) destroySQLConnectionOnError(con, res);
+                                });
+                                con.query("DELETE FROM activityData WHERE userId=?", [userId], (e, r, f) => {
+                                    if(e) destroySQLConnectionOnError(con, res);
+                                });
+                            } else {
+                                res.sendStatus(401);
+                                con.destroy();
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    });
+});
+
 /**
  * @swagger
  *  paths:
