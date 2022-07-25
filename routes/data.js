@@ -520,17 +520,22 @@ router.post('/deleteData', verifyToken, (req, res) => {
                         else {
                             if(result.length > 0) {
                                 userId = result[0].userId;
-                                /*con.query("DELETE FROM activityData WHERE userId=?", [userId], (e, r, f) => {
-                                    if(e)
-                                });*/
                                 con.query("DELETE FROM accelerometerData WHERE userId=?", [userId], (e, r, f) => {
                                     if(e) destroySQLConnectionOnError(con, res);
-                                });
-                                con.query("DELETE FROM questionnaireData WHERE userId=?", [userId], (e, r, f) => {
-                                    if(e) destroySQLConnectionOnError(con, res);
-                                });
-                                con.query("DELETE FROM activityData WHERE userId=?", [userId], (e, r, f) => {
-                                    if(e) destroySQLConnectionOnError(con, res);
+                                    else {
+                                        con.query("DELETE FROM questionnaireData WHERE userId=?", [userId], (e, r, f) => {
+                                            if(e) destroySQLConnectionOnError(con, res);
+                                            else {
+                                                con.query("DELETE FROM activityData WHERE userId=?", [userId], (e, r, f) => {
+                                                    if(e) destroySQLConnectionOnError(con, res);
+                                                    else {
+                                                        res.sendStatus(200);
+                                                        con.destroy();
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
                                 });
                             } else {
                                 res.sendStatus(401);
