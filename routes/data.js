@@ -507,6 +507,24 @@ router.put('/setActivityData', verifyToken, (req, res) => {
     });
 });
 
+
+/**
+ * @swagger
+ *  paths:
+ *      /data/deleteData:
+ *          post:
+ *              summary: Delete all data associated with the user (requires bearer token)
+ *              tags: [Data]
+ *              security:
+ *                  - bearerAuth: []
+ *              responses:
+ *                  "200":
+ *                      description: User exists, all data associated with the user was successfully deleted
+ *                  "401":
+ *                      description: Token could not be verified
+ *                  "500":
+ *                      description: Internal server error
+ */
 router.post('/deleteData', verifyToken, (req, res) => {
     jwt.verify(req.token, tokenSecret, (err, authData) => {
         if(err) res.sendStatus(401);
