@@ -410,17 +410,17 @@ router.put('/setSensorData', verifyToken, (req, res) => {
             if(Array.isArray(b)) {
                 let done = 0;
                 if(b.length == 0) { res.sendStatus(200); return; }
-                for(let obj of b) {
-                    if(obj.timestamp && obj.values) {
-                        var con = createSQLConnection();
-                        con.connect((err) => {
-                            if(err) destroySQLConnectionOnError(con, res);
+                var con = createSQLConnection();
+                con.connect((err) => {
+                    if(err) destroySQLConnectionOnError(con, res);
+                    else {
+                        con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
+                            if(error) destroySQLConnectionOnError(con, res);
                             else {
-                                con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
-                                    if(error) destroySQLConnectionOnError(con, res);
-                                    else {
-                                        if(result.length > 0) {
-                                            userId = result[0].userId;
+                                if(result.length > 0) {
+                                    userId = result[0].userId;
+                                    for(let obj of b) {
+                                        if(obj.timestamp && obj.values) {
                                             con.query("INSERT INTO accelerometerData (userId, timestamp, data) VALUES (?, ?, ?)", [userId, obj.timestamp, JSON.stringify(obj.values)], (e, r, f) => {
                                                 if(e) destroySQLConnectionOnError(con, res);
                                                 else {
@@ -434,15 +434,17 @@ router.put('/setSensorData', verifyToken, (req, res) => {
                                         } else {
                                             res.sendStatus(401);
                                             con.destroy();
+                                            return;
                                         }
                                     }
-                                });
+                                } else {
+                                    res.sendStatus(401);
+                                    con.destroy();
+                                }
                             }
                         });
-                    } else {
-                        res.sendStatus(400);
                     }
-                }
+                });
             } else {
                 res.sendStatus(400);
             }
