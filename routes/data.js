@@ -424,6 +424,10 @@ router.put('/setSensorData', verifyToken, (req, res) => {
                                                 if(e) destroySQLConnectionOnError(con, res);
                                                 else {
                                                     done++;
+                                                    if(done == b.length) {
+                                                        res.sendStatus(200);
+                                                        con.destroy();
+                                                    }
                                                 }
                                             });
                                         } else {
@@ -437,10 +441,6 @@ router.put('/setSensorData', verifyToken, (req, res) => {
                     } else {
                         res.sendStatus(400);
                     }
-                }
-                if(done == b.length) {
-                    res.sendStatus(200);
-                    con.destroy();
                 }
             } else {
                 res.sendStatus(400);
