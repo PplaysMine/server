@@ -408,37 +408,40 @@ router.put('/setSensorData', verifyToken, (req, res) => {
     jwt.verify(req.token, tokenSecret, (err, authData) => {
         if(err) res.sendStatus(401);
         else {
-            if(Array.isArray(b)) console.log(true);
-            for(let obj of b) console.log(obj);
-            /*if(b.startTimestamp && b.endTimestamp && b.data) {
-                var con = createSQLConnection();
-                con.connect((err) => {
-                    if(err) destroySQLConnectionOnError(con, res);
-                    else {
-                        con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
-                            if(error) destroySQLConnectionOnError(con, res);
+            if(Array.isArray(b)) {
+                for(let obj of b) {
+                    if(obj.timestamp && obj.values) {
+                        var con = createSQLConnection();
+                        con.connect((err) => {
+                            if(err) destroySQLConnectionOnError(con, res);
                             else {
-                                if(result.length > 0) {
-                                    userId = result[0].userId;
-                                    con.query("INSERT INTO accelerometerData (userId, timestamp, data) VALUES (?, ?, ?)", [userId, b.timestamp, JSON.stringify(b.data)], (e, r, f) => {
-                                        if(e) destroySQLConnectionOnError(con, res);
-                                        else {
-                                            res.sendStatus(200);
+                                con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
+                                    if(error) destroySQLConnectionOnError(con, res);
+                                    else {
+                                        if(result.length > 0) {
+                                            userId = result[0].userId;
+                                            con.query("INSERT INTO accelerometerData (userId, timestamp, data) VALUES (?, ?, ?)", [userId, obj.timestamp, JSON.stringify(obj.values)], (e, r, f) => {
+                                                if(e) destroySQLConnectionOnError(con, res);
+                                                else {
+                                                    res.sendStatus(200);
+                                                    con.destroy();
+                                                }
+                                            });
+                                        } else {
+                                            res.sendStatus(401);
                                             con.destroy();
                                         }
-                                    });
-                                } else {
-                                    res.sendStatus(401);
-                                    con.destroy();
-                                }
+                                    }
+                                });
                             }
                         });
+                    } else {
+                        res.sendStatus(400);
                     }
-                });
+                }
             } else {
                 res.sendStatus(400);
-            }*/
-            res.sendStatus(200);
+            }
         }
     });
 });
