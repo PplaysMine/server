@@ -43,12 +43,11 @@
  *                      type: object
  *                      description: A single data object
  *              example:
- *                  timestamp: 0
- *                  data: {}
+ *                  [{timestamp: 0, values: []}]
  *          AllSensorData:
  *              type: object
  *              example:
- *                  [{timestamp: 0, data: {}}]
+ *                  [{timestamp: 0, data: []}]
  *          Data:
  *              type: object
  *              required:
