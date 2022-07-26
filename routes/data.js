@@ -408,6 +408,7 @@ router.put('/setSensorData', verifyToken, (req, res) => {
     jwt.verify(req.token, tokenSecret, (err, authData) => {
         if(err) res.sendStatus(401);
         else {
+            if(b instanceof Array) console.log(true);
             for(let obj of b) console.log(obj);
             /*if(b.startTimestamp && b.endTimestamp && b.data) {
                 var con = createSQLConnection();
