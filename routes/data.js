@@ -408,7 +408,8 @@ router.put('/setSensorData', verifyToken, (req, res) => {
     jwt.verify(req.token, tokenSecret, (err, authData) => {
         if(err) res.sendStatus(401);
         else {
-            if(b.startTimestamp && b.endTimestamp && b.data) {
+            for(let obj of b) console.log(obj);
+            /*if(b.startTimestamp && b.endTimestamp && b.data) {
                 var con = createSQLConnection();
                 con.connect((err) => {
                     if(err) destroySQLConnectionOnError(con, res);
@@ -435,7 +436,8 @@ router.put('/setSensorData', verifyToken, (req, res) => {
                 });
             } else {
                 res.sendStatus(400);
-            }
+            }*/
+            res.sendStatus(200);
         }
     });
 });
