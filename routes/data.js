@@ -408,6 +408,7 @@ router.put('/setSensorData', verifyToken, (req, res) => {
         if(err) res.sendStatus(401);
         else {
             if(Array.isArray(b)) {
+                let done = 0;
                 for(let obj of b) {
                     if(obj.timestamp && obj.values) {
                         var con = createSQLConnection();
@@ -422,8 +423,7 @@ router.put('/setSensorData', verifyToken, (req, res) => {
                                             con.query("INSERT INTO accelerometerData (userId, timestamp, data) VALUES (?, ?, ?)", [userId, obj.timestamp, JSON.stringify(obj.values)], (e, r, f) => {
                                                 if(e) destroySQLConnectionOnError(con, res);
                                                 else {
-                                                    res.sendStatus(200);
-                                                    con.destroy();
+                                                    done++;
                                                 }
                                             });
                                         } else {
@@ -437,6 +437,10 @@ router.put('/setSensorData', verifyToken, (req, res) => {
                     } else {
                         res.sendStatus(400);
                     }
+                }
+                if(done == b.length) {
+                    res.sendStatus(200);
+                    con.destroy();
                 }
             } else {
                 res.sendStatus(400);
