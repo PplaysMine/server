@@ -409,6 +409,7 @@ router.put('/setSensorData', verifyToken, (req, res) => {
         else {
             if(Array.isArray(b)) {
                 let done = 0;
+                if(b.length == 0) { res.sendStatus(200); return; }
                 for(let obj of b) {
                     if(obj.timestamp && obj.values) {
                         var con = createSQLConnection();
