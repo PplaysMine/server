@@ -16,8 +16,8 @@ const swaggerOptions = {
         openapi: "3.0.0",
         info: {
             title: "SELab 22A13 endpoint documentation",
-            version: "0.1.0",
-            description: "Splitted in two endpoints: User & Data (TBD)",
+            version: "1.0.0",
+            description: "Splitted in two endpoints: User & Data",
             license: {
             name: "MIT",
             url: "https://spdx.org/licenses/MIT.html",
