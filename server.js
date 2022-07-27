@@ -19,13 +19,13 @@ const swaggerOptions = {
             version: "1.0.0",
             description: "Splitted in two endpoints: User & Data",
             license: {
-            name: "MIT",
-            url: "https://spdx.org/licenses/MIT.html",
+                name: "MIT",
+                url: "https://spdx.org/licenses/MIT.html",
             },
-            contact: {
-            name: "",
-            url: "",
-            email: "",
+                contact: {
+                name: "",
+                url: "",
+                email: "",
             },
         },
         servers: [
