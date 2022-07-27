@@ -519,7 +519,25 @@ router.put('/setActivityData', verifyToken, (req, res) => {
     });
 });
 
-
+/**
+ * @swagger
+ *  paths:
+ *      /data/deleteActivity:
+ *          post:
+ *              summary: Delete specified activity of user (requires bearer token)
+ *              tags: [Data]
+ *              security:
+ *                  - bearerAuth: []
+ *              responses:
+ *                  "200":
+ *                      description: User exists, activity has been deleted
+ *                  "400":
+ *                      description: Missing / malformed request body
+ *                  "401":
+ *                      description: Token could not be verified
+ *                  "500":
+ *                      description: Internal server error
+ */
 router.post("/deleteActivity", verifyToken, (req, res) => {
     var b = req.body;
 
