@@ -519,6 +519,68 @@ router.put('/setActivityData', verifyToken, (req, res) => {
     });
 });
 
+/**
+ * @swagger
+ *  paths:
+ *      /data/deleteActivity:
+ *          post:
+ *              summary: Delete specified activity of user (requires bearer token)
+ *              tags: [Data]
+ *              security:
+ *                  - bearerAuth: []
+ *              responses:
+ *                  "200":
+ *                      description: User exists, activity has been deleted
+ *                  "400":
+ *                      description: Missing / malformed request body
+ *                  "401":
+ *                      description: Token could not be verified
+ *                  "500":
+ *                      description: Internal server error
+ */
+router.post("/deleteActivity", verifyToken, (req, res) => {
+    var b = req.body;
+
+    if(!b) {
+        res.sendStatus(400);
+        return;
+    }
+
+    jwt.verify(req.token, tokenSecret, (err, authData) => {
+        if(err) res.sendStatus(401);
+        else {
+            if(b.start && b.end) {
+                var con = createSQLConnection();
+                con.connect((err) => {
+                    if(err) destroySQLConnectionOnError(con, res);
+                    else {
+                        con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
+                            if(error) destroySQLConnectionOnError(con, res);
+                            else {
+                                if(result.length > 0) {
+                                    userId = result[0].userId;
+                                    con.query("DELETE FROM activityData WHERE userId=? AND start=? AND end=?", [userId, b.start, b.end], (e, r, f) => {
+                                        if(e) destroySQLConnectionOnError(con, res);
+                                        else {
+                                            res.sendStatus(200);
+                                            con.destroy();
+                                        }
+                                    });
+                                } else {
+                                    res.sendStatus(401);
+                                    con.destroy();
+                                }
+                            }
+                        });
+                    }
+                });
+            } else {
+                res.sendStatus(400);
+            }
+        }
+    });
+});
+
 
 /**
  * @swagger
