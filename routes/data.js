@@ -81,6 +81,26 @@
  *              type: object
  *              example:
  *                  [{start: 0, end: 0, name: ""}]
+ *          Activity:
+ *              type: object
+ *              required:
+ *                  - name
+ *                  - start
+ *                  - end
+ *              properties:
+ *                  name:
+ *                      type: string
+ *                      description: Name of the activity
+ *                  start:
+ *                      type: long
+ *                      description: Start timestamp of the activity
+ *                  end:
+ *                      type: long
+ *                      description: End timestamp of the activity
+ *              example:
+ *                  name: ''
+ *                  start: 0
+ *                  end: 0
  *      securitySchemes:
  *          bearerAuth:
  *              type: http
@@ -528,6 +548,12 @@ router.put('/setActivityData', verifyToken, (req, res) => {
  *              tags: [Data]
  *              security:
  *                  - bearerAuth: []
+ *              requestBody:
+ *                  required: true
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              $ref: '#/components/schemas/Activity'
  *              responses:
  *                  "200":
  *                      description: User exists, activity has been deleted
