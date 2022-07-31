@@ -416,7 +416,7 @@ router.put('/setSensorData', verifyToken, (req, res) => {
                                     userId = result[0].userId;
                                     for(let obj of b) {
                                         if(obj.timestamp && obj.values) {
-                                            con.query("INSERT INTO accelerometerData (userId, timestamp, data) VALUES (?, ?, ?)", [userId, obj.timestamp, JSON.stringify(obj.values)], (e, r, f) => {
+                                            con.query("INSERT INTO accelerometerData (userId, timestamp, values) VALUES (?, ?, ?)", [userId, obj.timestamp, JSON.stringify(obj.values)], (e, r, f) => {
                                                 if(e) destroySQLConnectionOnError(con, res);
                                                 else {
                                                     done++;
