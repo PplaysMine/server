@@ -270,46 +270,33 @@ router.get('/getActivityData', verifyToken, (req, res) => {
  *                      description: Internal server error
  */
 router.get('/getSensorData', verifyToken, (req, res) => {
-    var b = req.body;
-
-    if(!b || !Array.isArray(b)) {
-        res.sendStatus(400);
-        return;
-    }
-
-    b = b[0];
-
     jwt.verify(req.token, tokenSecret, (err, authData) => {
         if(err) res.sendStatus(401);
         else {
-            if(b.startTimestamp && b.endTimestamp) {
-                var con = createSQLConnection();
-                con.connect((err) => {
-                    if(err) destroySQLConnectionOnError(con, res);
-                    else {
-                        con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
-                            if(error) destroySQLConnectionOnError(con, res);
-                            else {
-                                if(result.length > 0) {
-                                    userId = result[0].userId;
-                                    con.query("SELECT timestamp, data FROM accelerometerData WHERE userId=? AND timestamp>=? AND timestamp<?", [userId, b.startTimestamp, b.endTimestamp], (e, r, f) => {
-                                        if(e) destroySQLConnectionOnError(con, res);
-                                        else {
-                                            res.status(200).send(r);
-                                            con.destroy();
-                                        }
-                                    });
-                                } else {
-                                    res.sendStatus(403);
-                                    con.destroy();
-                                }
+            var con = createSQLConnection();
+            con.connect((err) => {
+                if (err) destroySQLConnectionOnError(con, res);
+                else {
+                    con.query("SELECT userId FROM user WHERE username=? AND password=?", [authData.user.userName, authData.user.userPass], (error, result, fields) => {
+                        if (error) destroySQLConnectionOnError(con, res);
+                        else {
+                            if (result.length > 0) {
+                                userId = result[0].userId;
+                                con.query("SELECT timestamp, data FROM accelerometerData WHERE userId=? AND timestamp>=? AND timestamp<?", [userId, b.startTimestamp, b.endTimestamp], (e, r, f) => {
+                                    if (e) destroySQLConnectionOnError(con, res);
+                                    else {
+                                        res.status(200).send(r);
+                                        con.destroy();
+                                    }
+                                });
+                            } else {
+                                res.sendStatus(403);
+                                con.destroy();
                             }
-                        });
-                    }
-                });
-            } else {
-                res.sendStatus(400);
-            }
+                        }
+                    });
+                }
+            });
         }
     });
 });
