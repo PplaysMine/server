@@ -5,6 +5,7 @@ const fs = require('fs');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const basicAuth = require('express-basic-auth');
+const sql = require('mysql');
 const schedule = require('node-schedule');
 
 const options = {
@@ -73,8 +74,11 @@ const job = schedule.scheduleJob('0 10 1 * *', () => {
     con.connect((err) => {
         if(err) con.destroy();
         else {
-            //con.query("DELETE FROM accelerometerData WHERE");
-            con.destroy();
+            let minTimestamp = Date.now();
+            minTimestamp -= 1000 * 60 * 60 * 24 * 30;
+            con.query("DELETE FROM accelerometerData WHERE timestamp<?", [minTimestamp], (e, r, f) => {
+                con.destroy();
+            });
         }
     });
 });
