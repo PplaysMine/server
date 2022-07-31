@@ -28,8 +28,7 @@
  *                  - startTimestamp
  *                  - endTimestamp
  *              example:
- *                  startTimestamp: 0
- *                  endTimestamp: 0
+ *                  [{startTimestamp: 0, endTimestamp: 0}]
  *          SensorData:
  *              type: object
  *              required:
@@ -286,10 +285,12 @@ router.get('/getActivityData', verifyToken, (req, res) => {
 router.get('/getSensorData', verifyToken, (req, res) => {
     var b = req.body;
 
-    if(!b) {
+    if(!b || !Array.isArray(b)) {
         res.sendStatus(400);
         return;
     }
+
+    b = b[0];
 
     jwt.verify(req.token, tokenSecret, (err, authData) => {
         if(err) res.sendStatus(401);
