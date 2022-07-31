@@ -282,7 +282,7 @@ router.get('/getSensorData', verifyToken, (req, res) => {
                         else {
                             if (result.length > 0) {
                                 userId = result[0].userId;
-                                con.query("SELECT timestamp, data FROM accelerometerData WHERE userId=? AND timestamp>=? AND timestamp<?", [userId, b.startTimestamp, b.endTimestamp], (e, r, f) => {
+                                con.query("SELECT timestamp, data FROM accelerometerData WHERE userId=?", [userId], (e, r, f) => {
                                     if (e) destroySQLConnectionOnError(con, res);
                                     else {
                                         res.status(200).send(r);
