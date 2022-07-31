@@ -5,6 +5,7 @@ const fs = require('fs');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const basicAuth = require('express-basic-auth');
+const schedule = require('node-schedule');
 
 const options = {
     key: fs.readFileSync(config.ssl.keyLoc),
@@ -61,3 +62,19 @@ httpsServer.listen(config.server.port, () => {
 });
 
 app.listen(config.server.swaggerPort);
+
+const job = schedule.scheduleJob('0 10 1 * *', () => {
+    var con = sql.createConnection({
+        host: config.db.host,
+        user: config.db.user,
+        password: config.db.pass,
+        database: config.db.dbName,
+    });
+    con.connect((err) => {
+        if(err) con.destroy();
+        else {
+            //con.query("DELETE FROM accelerometerData WHERE");
+            con.destroy();
+        }
+    });
+});
