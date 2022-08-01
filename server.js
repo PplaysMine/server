@@ -36,7 +36,7 @@ const swaggerOptions = {
             },
         ],
     },
-    apis: ["./routes/user.js", "./routes/data.js"],
+    apis: ["./routes/user.js", "./routes/data.js", "./routes/researcher.js"],
 };
 
 const specs = swaggerJsdoc(swaggerOptions);
@@ -52,6 +52,7 @@ app = express();
 app.use(express.json());
 app.use('/user', require('./routes/user'));
 app.use('/data', require('./routes/data'));
+app.use('/researcher', require('./routes/researcher'));
 app.use("/api-docs", basicAuth({
     authorizer: basicAuthAuthorizer,
     challenge: true
