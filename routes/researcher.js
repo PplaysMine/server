@@ -64,3 +64,5 @@ router.get('/getData', (req, res) => {
         res.sendStatus(400);
     }
 });
+
+module.exports = router;
