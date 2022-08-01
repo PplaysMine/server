@@ -18,7 +18,8 @@ function createSQLConnection() {
     });
 }
 
-function destroySQLConnectionOnError(con, res) {
+function destroySQLConnectionOnError(con, res, err) {
+    console.log(err);
     res.sendStatus(500);
     con.destroy();
 }
@@ -34,7 +35,7 @@ router.get('/getData', (req, res) => {
     if(b.user && b.pass && b.userId && b.start && b.end) {
         var con = createSQLConnection();
         con.connect((err) => {
-            if(err) destroySQLConnectionOnError(con, res);
+            if(err) destroySQLConnectionOnError(con, res, err);
             else {
                 con.query('SELECT * FROM researchers WHERE username=? AND password=?', [b.user, b.pass], (e, r, f) => {
                     if(e) destroySQLConnectionOnError(con, res);
