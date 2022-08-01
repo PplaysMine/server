@@ -48,6 +48,7 @@ router.get('/getData', (req, res) => {
                                         if(e) destroySQLConnectionOnError(con, res);
                                         else {
                                             console.log(r);
+                                            res.sendStatus(200);
                                         }
                                     });
                                 }
